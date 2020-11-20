@@ -39,17 +39,7 @@ def centroid(f, a, b):
     return s_dfi/ s_fi
 
 def mean_max(f, a, b):
-    dom = np.linspace(a, b, 10000)
-    img = [f(i) for i in dom]
-    max_value = max(img)
-    sum_max = 0.0
-    count = 0
-    eps = 1e-4
-    for x in dom:
-        if abs(f(x) - max_value) <= eps:
-            sum_max += x
-            count += 1
-    return sum_max/count
+    return (left_max(f, a, b) + right_max(f, a, b))/2.0
 
 def left_max(f, a, b):
     dom = np.linspace(a, b, 10000)

@@ -1,3 +1,5 @@
+from membership import complement
+
 class FuzzySystem:
     def __init__(self, agregation_method):
         self.variables = {}
@@ -20,9 +22,14 @@ class FuzzySystem:
         for r in self.rules:
             u = 1
             for c in r.antecedents:
-                name, value = c
+                name, value, neg = c
                 input_value = input_var_values[name]
-                u = self.agregation_method.op(u, self.variables[name].values[value](input_value))
+                if neg: #if the clause is the type not A is a1
+                    f = self.variables[name].values[value]
+                    alpha = complement(f)(input_value)
+                else:
+                    alpha = self.variables[name].values[value](input_value)
+                u = self.agregation_method.op(u, alpha)
                 print(name, value, input_value, u)
             umbrals.append(u)
         return umbrals

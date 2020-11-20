@@ -44,6 +44,11 @@ def intersection(f, g):
         return min(f(x), g(x))
     return wrapper
 
+def complement(f):
+    def wrapper(x):
+        return 1 - f(x)
+    return wrapper
+
 def plot_func(func):
     dom = np.linspace(0, 100, 10000)
     y = [func(i) for i in dom]
@@ -58,11 +63,12 @@ def plot_func(func):
 if __name__ == "__main__":
     print("hello")
     dom = np.linspace(0, 100, 10000)
-    f1 = triangular(0, 10, 30)
+    f1 = triangular(10, 20, 30)
     # f1 = trapezoidal(10, 20, 30, 40)
     y1 = [f1(i) for i in dom]
 
-    f2 = triangular(15, 30, 45)
+    # f2 = triangular(15, 30, 45)
+    f2 = complement(f1)
     # f2 = trapezoidal(45, 55, 64, 75)
     y2 = [f2(i) for i in dom]
 
@@ -79,7 +85,7 @@ if __name__ == "__main__":
 
     # axs.plot(dom, yu, "b:", label = "f1")
     axs.plot(dom, y1, "r:", label = "f2")
-    # axs.plot(dom, y2, "g:", label = "f3")
+    axs.plot(dom, y2, "g:", label = "f3")
     axs.legend()
     plt.show()
 

@@ -29,12 +29,24 @@ class Rule:
         self.antecedents = []
         self.consequent = None
 
-    def add_antecedent(self, var_name, value):
-        self.antecedents.append((var_name, value))
+    def add_antecedent(self, var_name, value, neg):
+        self.antecedents.append((var_name, value, neg))
 
     def add_consequent(self, var_name, value, dom):
         self.consequent = (var_name, value, dom)
 
-# def parse_rule(rule_str):
-#     ant = 
+def parse_rule(rule_str):
+    parts = rule_str.split("=>")
+    ant_clauses = parts[0].split("and")
+    cons_clauses = parts[1].split("and")
+    print(ant_clauses)
+    print(cons_clauses)
+    
+
+if __name__ == "__main__":
+    r = " not A is a1 and B is b1 and C is c1 => D is d1 and E is e1"
+    parse_rule(r)
+    print("not B is b ".split("is"))
+    print(" not B ".split())
+
 

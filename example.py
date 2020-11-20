@@ -32,13 +32,13 @@ fuzzy.add_variable(v3)
 
 #---------------RULES-----------------------
 r1 = Rule()
-r1.add_antecedent("Walkers", "Medium")
-r1.add_antecedent("Traffic", "Moderate")
+r1.add_antecedent("Walkers", "Medium", True)
+r1.add_antecedent("Traffic", "Moderate", False)
 r1.add_consequent("GreenDuration", "Medium", (20, 60))
 
 r2 = Rule()
-r2.add_antecedent("Walkers", "Low")
-r2.add_antecedent("Traffic", "Intense")
+r2.add_antecedent("Walkers", "Low", False)
+r2.add_antecedent("Traffic", "Intense", False)
 r2.add_consequent("GreenDuration", "Short", (0, 20))
 
 fuzzy.add_rule(r1)
