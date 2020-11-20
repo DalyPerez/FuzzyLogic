@@ -82,7 +82,7 @@ class Larsen:
             i += 1
             
         defuzzi_values = {}
-        for var, value in out_var_func.items():
+        for var, value in out_var_func(f).items():
             f, dom = value
             a, b = dom
             plot_func(f)
