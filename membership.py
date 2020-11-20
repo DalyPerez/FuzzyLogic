@@ -55,6 +55,7 @@ def plot_func(func):
     fig, axs = plt.subplots(1,1)
 
     axs.plot(dom, y, "r:", label = "f")
+    axs.set_ylim([-0.1,1.1])
     axs.legend()
     plt.show()
 
