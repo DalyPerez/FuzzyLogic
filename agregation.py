@@ -16,7 +16,8 @@ class Mamdani:
         
         i = 0
         for r in rules:
-            var_name, value, dom = r.consequent
+            var_name, value = r.consequent
+            dom = variables[var_name].domains[value]
             f = variables[var_name].values[value]
             c = corte(umbral_corts[i])
             f = intersection(f, c)
@@ -60,7 +61,8 @@ class Larsen:
         
         i = 0
         for r in rules:
-            var_name, value, dom = r.consequent
+            var_name, value = r.consequent
+            dom = variables[var_name].domains[value]
             f = variables[var_name].values[value]
             f = scalar_mult(umbral_corts[i], f)
             plot_func(f)
