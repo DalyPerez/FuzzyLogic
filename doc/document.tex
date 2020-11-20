@@ -93,6 +93,48 @@
 %insert table contents
 \tableofcontents
 \newpage
+\section{Introducción}
+Los porblemas que pretenden reflejar un comportamiento medianamente realista suelen requerir un elevado número de reglas mientras que los problemas simples no siempre llegan a tener
+aplicaciones en el mundo cotidiano, etc. Con este proyecto se ofrece un ejemplo que muestre el comportamiento de un sistema con reglas básicas y sencillas para una aplicación real.
+
+Se ha definido un sistema difuso que controla un semáforo, del que se describirán sus entradas, salidas, reglas, operadores de inferencia así como detalles de implementación.
+
+\section{Características del Sistema de Inferencia}
+Se propone un sistema de inferencia compuesto por una base de conocimientos
+\section{Principales ideas seguidas para la implementación}
+\section{Propuesta de problema}
+El modelo se basa en el control de un semáforo, específicamente la duración de la luz verde, según la cantidad de peatones que necesitan cruzar la calle y la cantidad de carros detenidos en cola durante la luz roja. 
+En primer lugar se van a definir las variables de entrada y salida del sistema. El semáforo tiene dos
+entradas y una salida. La primera entrada es la
+cantidad de peatones \lstinline|Walkers|. Esta entrada al ser una
+variable discreta tiene como dominio el conjunto de
+enteros entre 0 y 20. Sobre este dominio se definen
+tres conjuntos difusos que definen los predicados: \lstinline|Low|, \lstinline|Medium| y \lstinline|High|. El valor \lstinline|Medium| tiene función de pertenencia trapezoidal y el resto de tipo triangular.
+
+PONER GRÁFICO
+
+La segunda entrada también discreta es la cantidad de tráfico \lstinline|Traffic|, cuyo dominio está definido entre 0 y 35. Los conjuntos difusos que esta variable determina son: \lstinline|Null|, \lstinline|Moderate| y \lstinline|Intense|. En el siguiente gráfico se visualizan los tipos de funciones de pertenencia de cada uno de estos conjuntos.
+
+PONER GRÁFICO
+
+La variable de salida es la duración de la luz verde del semáforo en segundos \lstinline|GreenDuration|, el cual tiene como dominio los reales entre 0 y 100 además de definir tres conjuntos difusos: \lstinline|Short|, \lstinline|Medium| y \lstinline|Long|
+
+Las reglas de inferencia para este sistema difuso están simplificadas en la siguiente tabla y sus producciones son del tipo:
+
+ \textit{\lstinline|Walkers| = \lstinline|A| and \lstinline|Traffic| = \lstinline|B| $=>$ \lstinline|GreenDuration| = \lstinline|C| }
+ \\
+ donde \lstinline|A|, \lstinline|B| y \lstinline|C| son conjuntos difusos definidos anteriormente para cada variable.
+ 
+El comportamiento del sistema difuso dependerá de los operadores utilizados durante la fase de \textit{fuzzificación}, de la función de composición para computar el consecuente y del método de conversión de difuso a nítido.
+
+
+
+CREAR TABLA
+
+
+
+
+\section{Consideraciones obtenidas}
 
 
 \end{document}
