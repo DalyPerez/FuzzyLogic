@@ -29,6 +29,11 @@ def corte(umbral):
         return umbral
     return f
 
+def scalar_mult(a, f):
+    def g(x):
+        return a * f(x)
+    return g
+
 def union(f, g):
     def wrapper(x):
         return max(f(x), g(x))
