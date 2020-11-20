@@ -6,9 +6,9 @@ def triangular( a, b, c):
         if x < a:
             return 0
         elif a <= x and x <= b:
-            return 1. * (x - a)/ (b - a)
+            return 1. * (x - a) / (b - a)
         elif b <= x and x <= c:
-            return 1. * (c - x)/(c - b)
+            return 1. * (c - x) / (c - b)
         else:
             return 0
     return f
@@ -39,14 +39,21 @@ def intersection(f, g):
         return min(f(x), g(x))
     return wrapper
 
+def plot_func(func):
+    dom = np.linspace(0, 100, 10000)
+    y = [func(i) for i in dom]
+    fig, axs = plt.subplots(1,1)
 
+    axs.plot(dom, y, "r:", label = "f")
+    axs.legend()
+    plt.show()
 
 
 
 if __name__ == "__main__":
     print("hello")
     dom = np.linspace(0, 100, 10000)
-    f1 = triangular(10, 20, 30)
+    f1 = triangular(0, 10, 30)
     # f1 = trapezoidal(10, 20, 30, 40)
     y1 = [f1(i) for i in dom]
 
@@ -65,9 +72,9 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(1,1)
 
-    axs.plot(dom, yu, "b:", label = "f1")
+    # axs.plot(dom, yu, "b:", label = "f1")
     axs.plot(dom, y1, "r:", label = "f2")
-    axs.plot(dom, y2, "g:", label = "f3")
+    # axs.plot(dom, y2, "g:", label = "f3")
     axs.legend()
     plt.show()
 
