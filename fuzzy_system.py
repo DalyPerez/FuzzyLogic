@@ -22,7 +22,7 @@ class FuzzySystem:
             for c in r.antecedents:
                 name, value = c
                 input_value = input_var_values[name]
-                u = min(u, self.variables[name].values[value](input_value))
+                u = self.agregation_method.op(u, self.variables[name].values[value](input_value))
                 print(name, value, input_value, u)
             umbrals.append(u)
         return umbrals
@@ -32,8 +32,9 @@ class FuzzySystem:
             input_var_values: dict {var_name: var_value}
         """
         umbral_corts = self.fuzzification(input_var_values)
-        self.agregation_method.predict(self.variables, umbral_corts, self.rules)
-        
+        predict_dict = self.agregation_method.predict(self.variables, umbral_corts, self.rules)
+        for var_name, predict_value in predict_dict.items():
+            print(var_name, round(predict_value, 4))
 
 if __name__ == "__main__":
     fuzzy = FuzzySystem()

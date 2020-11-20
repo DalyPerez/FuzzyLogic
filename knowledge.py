@@ -32,6 +32,9 @@ class Rule:
     def add_antecedent(self, var_name, value):
         self.antecedents.append((var_name, value))
 
-    def add_consequent(self, var_name, value):
-        self.consequent = (var_name, value)
+    def add_consequent(self, var_name, value, dom):
+        self.consequent = (var_name, value, dom)
+
+# def parse_rule(rule_str):
+#     ant = 
 

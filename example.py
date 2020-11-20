@@ -1,9 +1,10 @@
 from knowledge import Variable, Rule
 from fuzzy_system import FuzzySystem
 from membership import triangular, trapezoidal
-from agregation import Mamdani
+from agregation import Mamdani, Larsen
+from defuzzy import centroid, bisector, mean_max, left_max, right_max
 
-fuzzy = FuzzySystem(Mamdani(None))
+fuzzy = FuzzySystem(Mamdani(bisector, lambda x, y: x * y))
 
 #------------------VARIABLES----------------------
 v1 = Variable("Traffic")
@@ -17,7 +18,7 @@ v2.add_value("Medium", triangular(5, 10, 15) )
 v2.add_value("High", triangular(10, 20, 30) )
 
 v3 = Variable("GreenDuration")
-v3.add_value("Short", triangular(0, 10, 20) )
+v3.add_value("Short", triangular(0, 10, 30) )
 v3.add_value("Medium", triangular(20, 40, 60) )
 v3.add_value("Long", triangular(40, 90, 100) )
 
@@ -33,12 +34,12 @@ fuzzy.add_variable(v3)
 r1 = Rule()
 r1.add_antecedent("Walkers", "Medium")
 r1.add_antecedent("Traffic", "Moderate")
-r1.add_consequent("GreenDuration", "Medium")
+r1.add_consequent("GreenDuration", "Medium", (20, 60))
 
 r2 = Rule()
 r2.add_antecedent("Walkers", "Low")
 r2.add_antecedent("Traffic", "Intense")
-r2.add_consequent("GreenDuration", "Short")
+r2.add_consequent("GreenDuration", "Short", (0, 20))
 
 fuzzy.add_rule(r1)
 fuzzy.add_rule(r2)
