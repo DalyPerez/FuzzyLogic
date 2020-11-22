@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def triangular( a, b, c):
+def triangular(a, b, c):
     def f(x):
         if x < a:
             return 0
@@ -57,6 +57,7 @@ def plot_func(func):
     axs.plot(dom, y, "r:", label = "f")
     axs.set_ylim([-0.1,1.1])
     axs.legend()
+    plt.savefig("out.png")
     plt.show()
 
 
@@ -64,29 +65,34 @@ def plot_func(func):
 if __name__ == "__main__":
     print("hello")
     dom = np.linspace(0, 100, 10000)
-    f1 = triangular(10, 20, 30)
-    # f1 = trapezoidal(10, 20, 30, 40)
-    y1 = [f1(i) for i in dom]
+    f1 = triangular(10, 30, 50)
+    c = complement(f1)
+    g1 = trapezoidal(10, 20, 30, 40)
+    y1 = [c(i) for i in dom]
 
-    # f2 = triangular(15, 30, 45)
-    f2 = complement(f1)
-    # f2 = trapezoidal(45, 55, 64, 75)
-    y2 = [f2(i) for i in dom]
+    f2 = triangular(30, 50, 70)
+    # f2 = complement(f1)
+    g2 = trapezoidal(30, 50, 70, 90)
+    # y2 = [g2(i) for i in dom]
 
     # f3 = triangular(25, 35, 45)
-    f3 = trapezoidal(15, 40, 60, 85)
-    y3 = [f3(i) for i in dom]
+    y3 = [g1(i) for i in dom]
 
-    f2 = corte(0.5)
-    u = intersection(f1, f2)
-    yu = [u(i) for i in dom]
+    # f2 = corte(0.5)
+    fint = intersection(f1, f2)
+    yi = [fint(i) for i in dom]
+
+    funion = union(g1, g2)
+    yu = [funion(i) for i in dom]
    
 
     fig, axs = plt.subplots(1,1)
 
-    # axs.plot(dom, yu, "b:", label = "f1")
-    axs.plot(dom, y1, "r:", label = "f2")
-    axs.plot(dom, y2, "g:", label = "f3")
+    axs.plot(dom, yi, "b:", label = "f1 & f2")
+    axs.set_ylim([0,1.1])
+    # axs.plot(dom, y2, "r:", label = "g2")
+    plt.savefig("int.png")
+    # axs.plot(dom, y2, "g:", label = "f3")
     axs.legend()
     plt.show()
 

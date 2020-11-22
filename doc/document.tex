@@ -57,7 +57,8 @@
 					\end{#1}
 				\end{minipage} } }
 			\end{center}}
-			\renewcommand{\proof}[1]{{\it Demostración}\\ #1 \hfill\blacksquare}
+		
+\renewcommand{\proof}[1]{{\it Demostración}\\ #1 \hfill\blacksquare}
 \newcommand{\pagediv}[4]
 {
 	\begin{figure}[!h]
@@ -94,47 +95,373 @@
 \tableofcontents
 \newpage
 \section{Introducción}
-Los porblemas que pretenden reflejar un comportamiento medianamente realista suelen requerir un elevado número de reglas mientras que los problemas simples no siempre llegan a tener
+Los problemas que pretenden reflejar un comportamiento medianamente realista suelen requerir un elevado número de reglas mientras que los problemas simples no siempre llegan a tener
 aplicaciones en el mundo cotidiano, etc. Con este proyecto se ofrece un ejemplo que muestre el comportamiento de un sistema con reglas básicas y sencillas para una aplicación real.
 
 Se ha definido un sistema difuso que controla un semáforo, del que se describirán sus entradas, salidas, reglas, operadores de inferencia así como detalles de implementación.
 
 \section{Características del Sistema de Inferencia}
-Se propone un sistema de inferencia compuesto por una base de conocimientos
+El sistema propuesto consta de funciones de pertenencia \textit{triangulares} y \textit{trapezoidales}. También posee los métodos de agregación de \textbf{Mamdani} y \textbf{Larsen} al igual que todos los métodos de desdifusificación (\textit{Centroide}, \textit{Bisección} y todas las variantes de los \textit{Máximos})
+
+
 \section{Principales ideas seguidas para la implementación}
+La solución está implementada en el lenguaje de programación \textit{Python} y la misma se divide en varios módulos o componentes:
+\begin{itemize}
+	\item \lstinline|fuzzy_system|: contiene la clase \lstinline|FuzzySystem| constituyendo la maquinaria de un sistema difuso. La misma ofrece  funcionalidades como la adición de una variable al sistema, adición de una regla, la fase de fusificación y de inferencia. Para crear un sistema difuso es necesario definir el método de agragación a utilizar, por tanto, este es recibido en la inicialización de la clase.
+	
+	\item \lstinline|agregation|: brinda la implementación de los dos métodos de agregación contemplados: \textit{Mamdani} y \textit{Larsen}.
+	
+	\item \lstinline|defuzzy|: incluye los métodos de desdifusificación implementados: centro de gravedad(\lstinline|centroid|), bisección(\lstinline|bisector|) y los métodos de máximos brindados son: menor de los máximos(\lstinline|left_max|), mayor de los máximos (\lstinline|right_max|) y media de los máximos(\lstinline|mean_max|).
+	 
+	\item \lstinline|knowledge|: define lo que serían las  variables difusas, las reglas y una función para \textit{parsear} las reglas recibidas como entrada en formato \textit{string}.
+	
+	\item  \lstinline|membership|: contiene las definiciones de las funciones de membresía utilizadas, además de las operaciones que se pueden establecer entre estas como la \textit{unión}, \textit{intersección}, \textit{complemento} y el \textit{corte} de una función dado un \textit{alpha}.
+
+\end{itemize}
+
+La implementación de las funciones de membresía y las operaciones admisibles entre estas se realizó completamente funcional, a continuación se muestra un segmento de código de dicha implementación.
+
+\begin{lstlisting}
+def triangular(a, b, c):
+	def f(x):
+		if x < a:
+			return 0
+		elif a <= x and x <= b:
+			return 1. * (x - a) / (b - a)
+		elif b <= x and x <= c:
+			return 1. * (c - x) / (c - b)
+		else:
+			return 0
+	return f
+
+def trapezoidal(a, b, c, d):
+	def f(x):
+		if x <= a or x >= d:
+			return 0
+		if x >= b and x <= c:
+			return 1
+		if x >= a and x <= b:
+			return 1. * (x - a) / (b - a)
+		return 1. * (d - x) / (d - c)
+	return f
+
+def union(f, g):
+	def wrapper(x):
+		return max(f(x), g(x))
+	return wrapper
+
+def intersection(f, g):
+	def wrapper(x):
+		return min(f(x), g(x))
+	return wrapper
+
+def complement(f):
+	def wrapper(x):
+		return 1 - f(x)
+	return wrapper
+\end{lstlisting}
+
+
+\subsection{Variables}
+La declaración de variables se realiza de la siguiente forma:
+
+\begin{lstlisting}
+v1 = Variable("Traffic")
+v1.add_value("Null", triangular(0, 5, 10), (0, 10) )
+v1.add_value("Moderate", trapezoidal(5, 10, 20, 25), (5, 25) )
+v1.add_value("Intense", triangular(15, 25, 35), (15, 35) )
+
+\end{lstlisting}
+
+Con la función \lstinline|add_value| se añaden los números difusos a la variable en cuestión, donde el primer parámetro es el tipo de función de membresía y el segundo un par que representa su dominio de definición distinta de cero.
+
+
+\subsection{Conjuntos difusos}
+Como se dijo anteriormente, solo se implementaron conjuntos difusos con función de pertenencia triangulares y trapezoidales.
+
+ La función \lstinline|triangular(x1, x2, x3)| retorna un conjunto difuso donde para elementos menores
+que $x1$ o mayores que $x3$ no pertenecen en absoluto al conjunto, de $x1$ a $x2$ aumenta de
+forma lineal desde pertenencia 0 a 1 y de $x2$ a $x3$ disminuye de 1 a 0. 
+
+\begin{lstlisting}
+f1 = triangular(10, 30, 50)
+f2 = triangular(30, 50, 70)
+\end{lstlisting}
+
+La función \lstinline|trapezoidal(x1, x2, x3, x4)| retorna un conjunto difuso donde para valores menores
+que $x1$ o mayores que $x4$ la pertenencia se define como 0, de $x1$ a $x2$ aumenta de 0 a 1 de
+forma lineal, de $x2$ a $x3$ es 1 y de $x3$ a $x4$ nuevamente disminuye de 1 a 0.
+
+\begin{lstlisting}
+g1 = trapezoidal(10, 20, 30, 40)
+g2 = trapezoidal(30, 50, 70, 90)
+\end{lstlisting}
+
+
+	\begin{figure}[!h]
+	\begin{minipage}[b]{0.5\textwidth}
+		\includegraphics[width=\linewidth]{./image/f2.png}
+		\caption{\small{Ejemplo de funciones triangulares}}			
+	\end{minipage} \hfill 
+	\begin{minipage}[b]{0.5\textwidth}
+		\includegraphics[width=\linewidth]{./image/g2.png}	
+		\caption{\small{Ejemplo de funciones trapezoidales}}
+	\end{minipage} \hfill 
+\end{figure}
+ 
+
+\subsection{Operaciones entre conjuntos}
+Es posible realizar operaciones entre las funciones definidas, a continuación se muestran algunos ejemplos utilizando las funciones de la Figura 1 y 2.
+
+\begin{lstlisting}
+f1_&_f2 = intersection(f1, f2)
+g1_|_g2 = union(g1, g2)
+not_f1 = complement(f1)
+\end{lstlisting}
+
+
+	\begin{figure}[!h]
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/int.png}
+		\caption{\small{Intersección f1 y f2}}			
+	\end{minipage} \hfill 
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/union.png}	
+		\caption{\small{Unión entre g1 y g2}}
+	\end{minipage} \hfill 
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/comp.png}
+		\caption{\small{Complemento de f1}}
+	\end{minipage}
+\end{figure}
+
+\subsection{Reglas}
+
+Las reglas son recibidas en formato texto y pertenecen a la siguiente gramática:
+
+	$S \rightarrow A \; '\implies Q$
+	
+	$Q \rightarrow  C$
+	
+	$A \rightarrow  C \; | \; C \; 'and' \; A$
+	
+	$C \rightarrow  Id \; 'is' \; Id | 'not' \; Id \;  'is' \; Id$
+
+Por tanto primeramente son \textit{parseadas} a través del método \lstinline|parse_rule| el cual devuelve una instancia de tipo \lstinline|Rule|.
+
+\subsection{Funciones de agregación}
+Contempladas en el archivo \lstinline|agregation.py|
+
+\begin{lstlisting}
+
+class Mamdani:
+	def __init__(self, defuzzifier, op):
+	
+	def predict(self, variables, umbral_corts, rules):
+
+class Larsen:
+	def __init__(self, defuzzifier, op):
+
+	def predict(self, variables, umbral_corts, rules):
+\end{lstlisting}
+
+Ambas reciben como parámetro la función que se utilizará para la desdifusificación y el operador(\textit{max}, \textit{min}, \textit{product}) que se aplicará durante la evaluación de cada regla a partir de los valores de entrada. El resultado de esta evaluación constituye el \textit{alpha} de corte que aporta cada regla para la evaluación de su consecuente.
+
 \section{Propuesta de problema}
 El modelo se basa en el control de un semáforo, específicamente la duración de la luz verde, según la cantidad de peatones que necesitan cruzar la calle y la cantidad de carros detenidos en cola durante la luz roja. 
 En primer lugar se van a definir las variables de entrada y salida del sistema. El semáforo tiene dos
-entradas y una salida. La primera entrada es la
-cantidad de peatones \lstinline|Walkers|. Esta entrada al ser una
-variable discreta tiene como dominio el conjunto de
-enteros entre 0 y 20. Sobre este dominio se definen
-tres conjuntos difusos que definen los predicados: \lstinline|Low|, \lstinline|Medium| y \lstinline|High|. El valor \lstinline|Medium| tiene función de pertenencia trapezoidal y el resto de tipo triangular.
+entradas y una salida.
+\\
 
-PONER GRÁFICO
+\textbf{Entradas}
 
-La segunda entrada también discreta es la cantidad de tráfico \lstinline|Traffic|, cuyo dominio está definido entre 0 y 35. Los conjuntos difusos que esta variable determina son: \lstinline|Null|, \lstinline|Moderate| y \lstinline|Intense|. En el siguiente gráfico se visualizan los tipos de funciones de pertenencia de cada uno de estos conjuntos.
+\begin{itemize}
+	\item cantidad de peatones(\lstinline|Walkers|): (\lstinline|Low|, \lstinline|Medium|, \lstinline|High|) variable discreta con dominio entre 0 y 20.
+	
+	\item  cantidad de carros (\lstinline|Traffic|): (\lstinline|Null|, \lstinline|Moderate|, \lstinline|Intense|) variable discreta con dominio entre 0 y 35.
+\end{itemize}
 
-PONER GRÁFICO
+\textbf{Salida}
 
-La variable de salida es la duración de la luz verde del semáforo en segundos \lstinline|GreenDuration|, el cual tiene como dominio los reales entre 0 y 100 además de definir tres conjuntos difusos: \lstinline|Short|, \lstinline|Medium| y \lstinline|Long|
+\begin{itemize}
+	\item duración luz verde(\lstinline|GreenDuration|): (\lstinline|Short|, \lstinline|Medium|, \lstinline|Long|) variable con dominio en los reales entre 0 y 100. 
+\end{itemize}
+A continuación se visualizan los conjuntos difusos definidos por cada variable y a su vez el tipo de función de membresía de los mismos.
 
-Las reglas de inferencia para este sistema difuso están simplificadas en la siguiente tabla y sus producciones son del tipo:
+	\begin{figure}[!h]
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/Walkers.png}
+		\caption{\small{ \textit{Walkers}}}			
+	\end{minipage} \hfill 
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/Traffic.png}
+		\caption{\small{ \textit{Traffic}}}
+	\end{minipage} \hfill 
+	\begin{minipage}[b]{0.3\textwidth}
+		\includegraphics[width=\linewidth]{./image/GreenDuration.png}
+		\caption{\small{ \textit{GreenDuration}}}
+	\end{minipage}
+\end{figure}
+
+
+Las reglas de inferencia para este sistema difuso están simplificadas en el cuadro 1 y sus producciones son del tipo:
 
  \textit{\lstinline|Walkers| = \lstinline|A| and \lstinline|Traffic| = \lstinline|B| $=>$ \lstinline|GreenDuration| = \lstinline|C| }
  \\
  donde \lstinline|A|, \lstinline|B| y \lstinline|C| son conjuntos difusos definidos anteriormente para cada variable.
  
-El comportamiento del sistema difuso dependerá de los operadores utilizados durante la fase de \textit{fuzzificación}, de la función de composición para computar el consecuente y del método de conversión de difuso a nítido.
+\begin{table}[!h]
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|}
+		\hline
+		Walkers/Traffic & Null & Moderate & Intense\\
+		\hline
+		Low & Medium & Short & Long \\
+		\hline
+		Medium & Short & Medium  & Medium \\
+		\hline
+		High & Short & Medium  & Long\\
+		\hline
+		\end{tabular}
+	\caption{Reglas del sistema difuso}
+	\end{center}
+	
+\end{table}
+
+\subsection{Consultas realizadas}
+
+A continuación se muestran algunas consultas realizadas al sistema de inferencia propuesto:
+
+\textbf{Entrada:} \textit{Walkers} = 7, \textit{Traffic} = 22\\
+\textbf{Función de agregación:} Mamdani \\
+\textbf{Función de desdifusificación:} \lstinline|centroid|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} = 33.2778
+
+ \begin{figure}[!ht]
+ 	\centering
+ 	\includegraphics[scale=0.4]{./image/out1.png}
+ 	\caption{\small{Conjunto difuso resultado de la agregación}}
+ \end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 7, \textit{Traffic} = 22\\
+\textbf{Función de agregación:} Mamdani \\
+\textbf{Función de desdifusificación:} \lstinline|left_max|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} = 25.5026
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out4.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 7, \textit{Traffic} = 22 \\
+\textbf{Función de agregación:} Larsen \\
+\textbf{Función de desdifusificación:} \lstinline|centroid|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} = 33.5185
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out2.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+ 
+ \textbf{Entrada:} \textit{Walkers} = 7, \textit{Traffic} = 22 \\
+ \textbf{Función de agregación:} Larsen \\
+ \textbf{Función de desdifusificación:} \lstinline|mean_max|\\
+ \textbf{Operador:} min\\\\
+ \textbf{Salida}: \textit{GreenDuration} = 34.9985
+ 
+ \begin{figure}[!ht]
+ 	\centering
+ 	\includegraphics[scale=0.4]{./image/out3.png}
+ 	\caption{\small{Conjunto difuso resultado de la agregación}}
+ \end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 8, \textit{Traffic} = 16\\
+\textbf{Función de agregación:} Mamdani \\
+\textbf{Función de desdifusificación:} \lstinline|bisector|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  33.75
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out5.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 4, \textit{Traffic} = 30\\
+\textbf{Función de agregación:} Mamdani \\
+\textbf{Función de desdifusificación:} \lstinline|centroid|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  70.0
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out6.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 4, \textit{Traffic} = 30\\
+\textbf{Función de agregación:} Larsen \\
+\textbf{Función de desdifusificación:} \lstinline|centroid|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  70.0
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out7.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
 
 
 
-CREAR TABLA
+
+\textbf{Entrada:} \textit{Walkers} = 18, \textit{Traffic} = 23\\
+\textbf{Función de agregación:} Mandani \\
+\textbf{Función de desdifusificación:} \lstinline|centroid|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  56.1728
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out8.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 3, \textit{Traffic} = 7\\
+\textbf{Función de agregación:} Mandani \\
+\textbf{Función de desdifusificación:} \lstinline|mean_max|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  33.9984
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out10.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+\textbf{Entrada:} \textit{Walkers} = 8, \textit{Traffic} = 4\\
+\textbf{Función de agregación:} Larsen \\
+\textbf{Función de desdifusificación:} \lstinline|bisector|\\
+\textbf{Operador:} min\\\\
+\textbf{Salida}: \textit{GreenDuration} =  10.0
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{./image/out11.png}
+	\caption{\small{Conjunto difuso resultado de la agregación}}
+\end{figure} 
+
+
+
 
 
 
 
 \section{Consideraciones obtenidas}
-
+El comportamiento del sistema difuso dependerá de los operadores utilizados durante la fase de fusificación, de la función de composición para computar el consecuente y del método de conversión de difuso a nítido.
 
 \end{document}

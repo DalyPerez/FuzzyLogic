@@ -21,7 +21,7 @@ class Mamdani:
             f = variables[var_name].values[value]
             c = corte(umbral_corts[i])
             f = intersection(f, c)
-            # plot_func(f)
+
             if not out_var_func.__contains__(var_name):
                 out_var_func[var_name] = (f, dom)
             else:
@@ -32,11 +32,8 @@ class Mamdani:
                 nb = max(b, lb) 
                 f = union(f, last_f )
                 out_var_func[var_name] = (f, (na, nb))
-            
-            # plot_func(out_var_func[var_name][0])
             i += 1
             
-        
         defuzzi_values = {}
         for var, value in out_var_func.items():
             f, dom = value
@@ -66,7 +63,6 @@ class Larsen:
             dom = variables[var_name].domains[value]
             f = variables[var_name].values[value]
             f = scalar_mult(umbral_corts[i], f)
-            # plot_func(f)
             if not out_var_func.__contains__(var_name):
                 out_var_func[var_name] = (f, dom)
             else:
@@ -77,12 +73,10 @@ class Larsen:
                 nb = max(b, lb) 
                 f = union(f, last_f )
                 out_var_func[var_name] = (f, (na, nb))
-            
-            # plot_func(out_var_func[var_name][0])
             i += 1
             
         defuzzi_values = {}
-        for var, value in out_var_func(f).items():
+        for var, value in out_var_func.items():
             f, dom = value
             a, b = dom
             plot_func(f)

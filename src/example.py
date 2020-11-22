@@ -3,8 +3,9 @@ from fuzzy_system import FuzzySystem
 from membership import triangular, trapezoidal
 from agregation import Mamdani, Larsen
 from defuzzy import centroid, bisector, mean_max, left_max, right_max
+import matplotlib.pyplot as plt
 
-fuzzy = FuzzySystem(Mamdani(centroid, min))
+fuzzy = FuzzySystem(Larsen(bisector, min))
 
 #------------------VARIABLES----------------------
 v1 = Variable("Traffic")
@@ -26,9 +27,9 @@ fuzzy.add_variable(v1)
 fuzzy.add_variable(v2)
 fuzzy.add_variable(v3)
 
-# v1.plot()
-# v2.plot()
-# v3.plot()
+# v1.plot(0, 35)
+# v2.plot(0, 20)
+# v3.plot(0, 100)
 
 #---------------RULES-----------------------
 r1 = parse_rule("Walkers is Low and Traffic is Null => GreenDuration is Medium") 
@@ -51,7 +52,7 @@ fuzzy.add_rule(r7)
 fuzzy.add_rule(r8)
 fuzzy.add_rule(r9)
 
-input_var = {"Walkers": 7 , "Traffic": 22 }
+input_var = {"Walkers": 8 , "Traffic": 4 }
 
 fuzzy.inference(input_var)
 

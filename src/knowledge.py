@@ -11,10 +11,8 @@ class Variable:
         self.values[value_name] = member_func
         self.domains[value_name] = dom
 
-    def fuzzify(self):
-        pass
-
-    def plot(self, dom = np.linspace(0, 100, 10000) ):
+    def plot(self, a, b):
+        dom = np.linspace(a, b, 10000)
         fig, axs = plt.subplots(1,1)
         colors = ["r:", "b:", "g:"]
         c = 0
@@ -23,6 +21,7 @@ class Variable:
             axs.plot(dom, y, colors[c], label = name)
             c += 1
         axs.legend()
+        plt.savefig(f'{self.name}.png')
         plt.show()
         
 
