@@ -1,6 +1,5 @@
 from membership import *
 
-
 class Mamdani:
     def __init__(self, defuzzifier, op):
         """
@@ -12,8 +11,7 @@ class Mamdani:
 
     def predict(self, variables, umbral_corts, rules):
         out_var_func = {} # {var_name: agregate_function}
-        print("umbrals:", umbral_corts)
-        
+
         i = 0
         for r in rules:
             var_name, value = r.consequent
@@ -39,7 +37,6 @@ class Mamdani:
             f, dom = value
             a, b = dom
             plot_func(f)
-            print(var, dom)
             defuzzi_values[var] = self.defuzzifier(f, a, b)
 
         return defuzzi_values
@@ -55,7 +52,6 @@ class Larsen:
 
     def predict(self, variables, umbral_corts, rules):
         out_var_func = {} # {var_name: agregate_function}
-        print("umbrals:", umbral_corts)
         
         i = 0
         for r in rules:
@@ -80,7 +76,6 @@ class Larsen:
             f, dom = value
             a, b = dom
             plot_func(f)
-            print(var, dom)
             defuzzi_values[var] = self.defuzzifier(f, a, b)
 
         return defuzzi_values

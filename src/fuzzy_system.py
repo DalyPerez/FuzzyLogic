@@ -30,7 +30,6 @@ class FuzzySystem:
                 else:
                     alpha = self.variables[name].values[value](input_value)
                 u = self.agregation_method.op(u, alpha)
-                print(name, value, input_value, u)
             umbrals.append(u)
         return umbrals
 
@@ -41,7 +40,7 @@ class FuzzySystem:
         umbral_corts = self.fuzzification(input_var_values)
         predict_dict = self.agregation_method.predict(self.variables, umbral_corts, self.rules)
         for var_name, predict_value in predict_dict.items():
-            print(var_name, round(predict_value, 4))
+            print("Inference result: ", var_name, round(predict_value, 4))
 
 if __name__ == "__main__":
     fuzzy = FuzzySystem()

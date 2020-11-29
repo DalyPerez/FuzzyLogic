@@ -51,10 +51,8 @@ def parse_rule(rule_str):
         var = var.split()
         value = value.split()
         if len(var) > 1:
-            print(var, f'{value}')
             r.add_antecedent(var[1], value[0], True)
         else:
-            print(var, f'{value}')
             r.add_antecedent(var[0], value[0], False)
     
     c_var, c_value = cons_clauses.split("is")
@@ -63,8 +61,6 @@ def parse_rule(rule_str):
     r.add_consequent(c_var, c_value)
     return r
 
-
- 
 
 if __name__ == "__main__":
     r = " not A is a1 and B is b1 and C is c1 => D is d1"

@@ -76,7 +76,8 @@
 
 %define title
 \author{
-	Dalianys P\'erez Perera\\
+	Dalianys Pérez Perera\\
+	2019-2020\\
 	C-411 
 }
 \title{Proyecto de Lógica Difusa   \\
@@ -101,13 +102,13 @@ aplicaciones en el mundo cotidiano, etc. Con este proyecto se ofrece un ejemplo 
 Se ha definido un sistema difuso que controla un semáforo, del que se describirán sus entradas, salidas, reglas, operadores de inferencia así como detalles de implementación.
 
 \section{Características del Sistema de Inferencia}
-El sistema propuesto consta de funciones de pertenencia \textit{triangulares} y \textit{trapezoidales}. También posee los métodos de agregación de \textbf{Mamdani} y \textbf{Larsen} al igual que todos los métodos de desdifusificación (\textit{Centroide}, \textit{Bisección} y todas las variantes de los \textit{Máximos})
+El sistema propuesto consta de funciones de pertenencia \textit{triangulares} y \textit{trapezoidales}. También posee los métodos de agregación de \textbf{Mamdani} y \textbf{Larsen} al igual que todos los métodos de desdifusificación (\textit{Centroide}, \textit{Bisección} y todas las variantes de los \textit{Máximos}). Admite mútiples variables de entrada y para simular mútiples variables de salida, en la entrada se debe replicar la regla tantas veces como variables de salida haya.
 
 
 \section{Principales ideas seguidas para la implementación}
 La solución está implementada en el lenguaje de programación \textit{Python} y la misma se divide en varios módulos o componentes:
 \begin{itemize}
-	\item \lstinline|fuzzy_system|: contiene la clase \lstinline|FuzzySystem| constituyendo la maquinaria de un sistema difuso. La misma ofrece  funcionalidades como la adición de una variable al sistema, adición de una regla, la fase de fusificación y de inferencia. Para crear un sistema difuso es necesario definir el método de agragación a utilizar, por tanto, este es recibido en la inicialización de la clase.
+	\item \lstinline|fuzzy_system|: contiene la clase \lstinline|FuzzySystem| constituyendo la maquinaria de un sistema difuso. La misma ofrece  funcionalidades como la adición de una variable al sistema, adición de una regla, la fase de fusificación y de inferencia. Para crear un sistema difuso es necesario definir el método de agregación a utilizar, por tanto, este es recibido en la inicialización de la clase.
 	
 	\item \lstinline|agregation|: brinda la implementación de los dos métodos de agregación contemplados: \textit{Mamdani} y \textit{Larsen}.
 	
@@ -239,7 +240,7 @@ not_f1 = complement(f1)
 
 Las reglas son recibidas en formato texto y pertenecen a la siguiente gramática:
 
-	$S \rightarrow A \; '\implies Q$
+	$S \rightarrow A \; '\implies' Q$
 	
 	$Q \rightarrow  C$
 	
@@ -247,7 +248,7 @@ Las reglas son recibidas en formato texto y pertenecen a la siguiente gramática:
 	
 	$C \rightarrow  Id \; 'is' \; Id | 'not' \; Id \;  'is' \; Id$
 
-Por tanto primeramente son \textit{parseadas} a través del método \lstinline|parse_rule| el cual devuelve una instancia de tipo \lstinline|Rule|.
+Por tanto primeramente son \textit{parseadas} a través del método \lstinline|parse_rule| el cual devuelve una instancia de tipo \lstinline|Rule|. En una cláusula del tipo $Id \; 'is' \; Id $, el primer terminal \textit{Id} representa el nombre de la variable del sistema, mientras que el segundo sería el nombre del conjunto difuso correspondiente a la variable en cuestión. Lo anterior se cumple de la misma forma para las cláusulas negativas.
 
 \subsection{Funciones de agregación}
 Contempladas en el archivo \lstinline|agregation.py|
@@ -386,6 +387,8 @@ A continuación se muestran algunas consultas realizadas al sistema de inferencia
 \textbf{Operador:} min\\\\
 \textbf{Salida}: \textit{GreenDuration} =  33.75
 
+\newpage
+
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[scale=0.4]{./image/out5.png}
@@ -409,6 +412,8 @@ A continuación se muestran algunas consultas realizadas al sistema de inferencia
 \textbf{Función de desdifusificación:} \lstinline|centroid|\\
 \textbf{Operador:} min\\\\
 \textbf{Salida}: \textit{GreenDuration} =  70.0
+
+\newpage
 
 \begin{figure}[!ht]
 	\centering
@@ -437,6 +442,8 @@ A continuación se muestran algunas consultas realizadas al sistema de inferencia
 \textbf{Operador:} min\\\\
 \textbf{Salida}: \textit{GreenDuration} =  33.9984
 
+\newpage
+
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[scale=0.4]{./image/out10.png}
@@ -462,6 +469,11 @@ A continuación se muestran algunas consultas realizadas al sistema de inferencia
 
 
 \section{Consideraciones obtenidas}
-El comportamiento del sistema difuso dependerá de los operadores utilizados durante la fase de fusificación, de la función de composición para computar el consecuente y del método de conversión de difuso a nítido.
+Se realizaron varias consultas al sistema difuso propuesto, probando con varias entradas diferentes y entre ellas diferentes combinaciones de métodos de agregación, desdifusificación y operadores. Se concluye que el comportamiento del sistema difuso dependerá de los operadores utilizados durante la fase de fusificación, de la función de composición para computar el consecuente y del método de conversión de difuso a nítido.
+
+De manera general, los resultados se corresponden con lo esperado en cada una de las reglas. Lo anterior se puede comprobar visualmente en los ejemplos brindados, pues al aplicar el método de desdifusificación correspondiente en cada caso al conjunto difuso resultado de la agregación, se evidencia la correctitud de la implementación.
+
+\textit{Mamdani} y \textit{Larsen} arrojaron resultados similares para una misma entrada, no siendo así si se utilizaban las funciones de desdifusificación \lstinline|left_max| o \lstinline|right_max|.
+ 
 
 \end{document}
